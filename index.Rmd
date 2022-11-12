@@ -7,8 +7,6 @@ output:
     self_contained: false
 ---
 
-
-
 ## Project thoughts
 
 
@@ -19,3 +17,61 @@ I hypothesize that fertilizer will increase annual crop yield, however, this may
 The data set I have separates crops into annuals and perennials. Within each type of crop, there are 5 subsets of crops that are commonly grown by farmers in Vietnam. Data for each crop type has the quantity of fertilizer usage by the area. Additionally, the data set includes information about each farmer, their province, sex, and leave of education. The explanatory variable could be the area of farmland and the fertilizer usage. The outcome variable of interest is the total crop yield. 
 
 Patterns I hope to observe in this data is any relationship between the types of crops that farmers use more fertilizer on. It would be interesting to see whether farmers are using fertilizers more on annual or perennial crops and especially, whether are there crops in that fertilizer usage is heavily concentrated. It would also be interesting to see if the age of the farmer impacts how much fertilizer they use. My dataset has 20,930 observations. The year of birth of the farmers in the dataset range from 1950 to 2000. There are a lot of missing variables so that is something I would need to consider with this data set. 
+
+
+
+```{r}
+install.packages("tidyverse")
+install.packaged("ggplot2")
+library("tidyverse")
+library("ggplot2")
+
+data.tt2020 <- read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
+head(data.tt2020)
+
+## Summary Statistics 
+
+summary(data.tt2020)
+summary(data.tt2020[c("PHANHH","PHANHH01_DT","PHANHH01_KL")])
+summary(data.tt2020[c("LDSXNU_TS","PHANHH01_DT","PHANHH01_KL")])
+
+women <- data.tt2020 %>% 
+  filter(GIOITINH == 2)
+
+cor(data.tt2020[c("PHANHH01_DL", "PHANHH01_KL")])
+mean(~PHANHH01_KL, data=data.tt2020, na.rm=TRUE)
+sd(~PHANHH01_KL, data=data.tt2020, na.rm=TRUE)
+favstats(~PHANHH01_KL, data=data.tt2020)
+
+## Group by age:
+
+data.tt2020 %>% 
+  group_by("NAMSINH") %>% 
+         summarise(yr_min=min(NAMSINH) , yr_max=max(NAMSINH))
+
+## Relationship between quantity of fertilzer use on annual crops
+
+theme_set(theme_bw())
+
+ggplot(data = data.tt2020,
+       mapping = aes(x = PHANHH01_DT,
+                     y = PHANHH01_KL))+
+  geom_point(method = "loess", se = FALSE)+
+  scale_x_log10() +
+  labs(x = "Area of Fertilizer (m2)" ,
+       y = "Quantity of Fertilzer (kg)",
+       title = "Fertilzer Usage on Annual Crops")
+
+## Relationship between quantity of fertilzer use on perennial crops
+
+ggplot(data = data.tt2020,
+       mapping = aes(x = PHANHH04_DT,
+                     y = PHANHH04_KL))+
+  geom_point(method = "loess", se = FALSE)+
+  scale_x_log10() +
+  labs(x = "Area of Fertilizer (m2)" ,
+       y = "Quantity of Fertilzer (kg)",
+       title = "Fertilzer Usage on Perennials Crops")
+```
+
+
