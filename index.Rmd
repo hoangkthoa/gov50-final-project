@@ -21,33 +21,32 @@ Patterns I hope to observe in this data is any relationship between the types of
 
 
 ```{r}
-install.packages("tidyverse")
-install.packaged("ggplot2")
 library("tidyverse")
 library("ggplot2")
 
-data.tt2020 <- read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
-head(data.tt2020)
+data.tt2020 <- 
+  read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
+# head(data.tt2020)
 
 ## Summary Statistics 
 
-summary(data.tt2020)
-summary(data.tt2020[c("PHANHH","PHANHH01_DT","PHANHH01_KL")])
-summary(data.tt2020[c("LDSXNU_TS","PHANHH01_DT","PHANHH01_KL")])
+# summary(data.tt2020)
+# summary(data.tt2020[c("PHANHH","PHANHH01_DT","PHANHH01_KL")])
+# summary(data.tt2020[c("LDSXNU_TS","PHANHH01_DT","PHANHH01_KL")])
 
 women <- data.tt2020 %>% 
   filter(GIOITINH == 2)
 
-cor(data.tt2020[c("PHANHH01_DL", "PHANHH01_KL")])
-mean(~PHANHH01_KL, data=data.tt2020, na.rm=TRUE)
-sd(~PHANHH01_KL, data=data.tt2020, na.rm=TRUE)
-favstats(~PHANHH01_KL, data=data.tt2020)
+cor(data.tt2020[c("PHANHH01_DT", "PHANHH01_KL")])
+mean(data.tt2020$PHANHH01_KL, na.rm=TRUE)
+sd(data.tt2020$PHANHH01_KL, na.rm=TRUE)
+# favstats(~PHANHH01_KL, data=data.tt2020)
 
 ## Group by age:
 
-data.tt2020 %>% 
-  group_by("NAMSINH") %>% 
-         summarise(yr_min=min(NAMSINH) , yr_max=max(NAMSINH))
+# data.tt2020 %>% 
+#   group_by("NAMSINH") %>% 
+#          summarise(yr_min=min(NAMSINH) , yr_max=max(NAMSINH))
 
 ## Relationship between quantity of fertilzer use on annual crops
 
@@ -55,8 +54,9 @@ theme_set(theme_bw())
 
 ggplot(data = data.tt2020,
        mapping = aes(x = PHANHH01_DT,
-                     y = PHANHH01_KL))+
-  geom_point(method = "loess", se = FALSE)+
+                     y = log(PHANHH01_KL)))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
   labs(x = "Area of Fertilizer (m2)" ,
        y = "Quantity of Fertilzer (kg)",
@@ -66,8 +66,9 @@ ggplot(data = data.tt2020,
 
 ggplot(data = data.tt2020,
        mapping = aes(x = PHANHH04_DT,
-                     y = PHANHH04_KL))+
-  geom_point(method = "loess", se = FALSE)+
+                     y = log(PHANHH04_KL)))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
   labs(x = "Area of Fertilizer (m2)" ,
        y = "Quantity of Fertilzer (kg)",
