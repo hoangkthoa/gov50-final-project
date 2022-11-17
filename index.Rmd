@@ -26,27 +26,6 @@ library("ggplot2")
 
 data.tt2020 <- 
   read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
-# head(data.tt2020)
-
-## Summary Statistics 
-
-# summary(data.tt2020)
-# summary(data.tt2020[c("PHANHH","PHANHH01_DT","PHANHH01_KL")])
-# summary(data.tt2020[c("LDSXNU_TS","PHANHH01_DT","PHANHH01_KL")])
-
-women <- data.tt2020 %>% 
-  filter(GIOITINH == 2)
-
-cor(data.tt2020[c("PHANHH01_DT", "PHANHH01_KL")])
-mean(data.tt2020$PHANHH01_KL, na.rm=TRUE)
-sd(data.tt2020$PHANHH01_KL, na.rm=TRUE)
-# favstats(~PHANHH01_KL, data=data.tt2020)
-
-## Group by age:
-
-# data.tt2020 %>% 
-#   group_by("NAMSINH") %>% 
-#          summarise(yr_min=min(NAMSINH) , yr_max=max(NAMSINH))
 
 ## Relationship between quantity of fertilzer use on annual crops
 
