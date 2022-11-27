@@ -18,6 +18,15 @@ The data set I have separates crops into annuals and perennials. Within each typ
 
 Patterns I hope to observe in this data is any relationship between the types of crops that farmers use more fertilizer on. It would be interesting to see whether farmers are using fertilizers more on annual or perennial crops and especially, whether are there crops in that fertilizer usage is heavily concentrated. It would also be interesting to see if the age of the farmer impacts how much fertilizer they use. My dataset has 20,930 observations. The year of birth of the farmers in the dataset range from 1950 to 2000. There are a lot of missing variables so that is something I would need to consider with this data set. 
 
+Milestone 4: Add results from one analysis
+
+Graph 1: Fertilizer Usage on Annual Crops
+
+I observe a positive relationship between the quantity of fertilizer used and the area of land. Logically, this makes sense because as farmable area increases, the quantity of fertilizer used on the land increases. 
+
+Graph 2: Fertilizer Usage on Perennial Crops
+
+I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
 
 
 ```{r}
@@ -27,7 +36,7 @@ library("ggplot2")
 data.tt2020 <- 
   read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
 
-## Relationship between quantity of fertilzer use on annual crops
+## Relationship between quantity of fertilizer use on annual crops
 
 theme_set(theme_bw())
 

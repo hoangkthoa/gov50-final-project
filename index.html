@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/~$DataDictionaryTT.xlsx","data/Data_TT2020.csv","data/DataDictionaryTT.xlsx","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-1-2.png","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/Data_TT2020.csv","data/DataDictionaryTT.xlsx","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-1-2.png","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1522,6 +1522,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>I hypothesize that fertilizer will increase annual crop yield, however, this may not be consistent across the different types of crops. Additionally, fertilizer usage may also be dependent on cost and how much the Vietnamese government is able to subsidize. Therefore, I hypothesize that the yield may not be consistent, and this may also depend on the actual farm size. I hope to supplement my data with some qualitative information about how much the Vietnamese government subsidized fertilizer in 2020 to see if this may have impacted fertilizer usage. I only have a data set for 2020, but hope to gather another dataset from a different year to do a comparison between fertilizer usage across various years.</p>
 <p>The data set I have separates crops into annuals and perennials. Within each type of crop, there are 5 subsets of crops that are commonly grown by farmers in Vietnam. Data for each crop type has the quantity of fertilizer usage by the area. Additionally, the data set includes information about each farmer, their province, sex, and leave of education. The explanatory variable could be the area of farmland and the fertilizer usage. The outcome variable of interest is the total crop yield.</p>
 <p>Patterns I hope to observe in this data is any relationship between the types of crops that farmers use more fertilizer on. It would be interesting to see whether farmers are using fertilizers more on annual or perennial crops and especially, whether are there crops in that fertilizer usage is heavily concentrated. It would also be interesting to see if the age of the farmer impacts how much fertilizer they use. My dataset has 20,930 observations. The year of birth of the farmers in the dataset range from 1950 to 2000. There are a lot of missing variables so that is something I would need to consider with this data set.</p>
+<p>Milestone 4: Add results from one analysis</p>
+<p>Graph 1: Fertilizer Usage on Annual Crops</p>
+<p>I observe a positive relationship between the quantity of fertilizer used and the area of land. Logically, this makes sense because as farmable area increases, the quantity of fertilizer used on the land increases.</p>
+<p>Graph 2: Fertilizer Usage on Perennial Crops</p>
+<p>I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://tidyverse.tidyverse.org'>"tidyverse"</a></span><span class='op'>)</span></span>
@@ -1530,7 +1535,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span><span class='va'>data.tt2020</span> <span class='op'>&lt;-</span> </span>
 <span>  <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv"</span><span class='op'>)</span></span>
 <span></span>
-<span><span class='co'>## Relationship between quantity of fertilzer use on annual crops</span></span>
+<span><span class='co'>## Relationship between quantity of fertilizer use on annual crops</span></span>
 <span></span>
 <span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme_get.html'>theme_set</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_bw</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
 <span></span>
