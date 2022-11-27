@@ -37,6 +37,8 @@ data.tt2020 <-
   read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
 
 ## Relationship between quantity of fertilizer use on annual crops
+## I observe a positive relationship between the quantity of fertilizer used and the area of land.
+
 
 theme_set(theme_bw())
 
@@ -50,7 +52,8 @@ ggplot(data = data.tt2020,
        y = "Quantity of Fertilzer (kg)",
        title = "Fertilzer Usage on Annual Crops")
 
-## Relationship between quantity of fertilzer use on perennial crops
+## Relationship between quantity of fertilizer use on perennial crops
+##I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
 
 ggplot(data = data.tt2020,
        mapping = aes(x = PHANHH04_DT,
