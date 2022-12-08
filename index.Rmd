@@ -1,18 +1,33 @@
 ---
 title: "Gov 50 Final Project"
 author: Thoa Hoang
-description: "My final project"
+description: "Fertilizer usage and earning potential from crop yield in Vietnam"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
-## Project thoughts
+```{r setup, include = FALSE}
+options(width = 100)
 
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(infer)
+
+
+Data_TT2020 <- read_csv("data/Data_TT2020.csv")
+
+```
+
+
+## Background and Project Overview 
 
 The agriculture industry contributes an estimated USD $717 billion to the GDP of Indonesia, Thailand, Philippines, and Vietnam. It employs over 127 million people and accounts for around 30 percent of the entire region’s economy. Yet, the sector has lower productivity and incomes, which contribute to four out of five in rural areas living below the international poverty line. In Southeast Asia, agriculture is closely tied to poverty reduction and economic growth strategy for the region. Farmers in Vietnam depend on fertilizer to increase their crop yield as a way to also increase their income. However, it is unclear how effective fertilizer is on crop yield and if this is consistent across different perennial and annual crops in Vietnam. Through this project, I will use a data set from the Rural and Agricultural 2020 Census.
 
 I hypothesize that fertilizer will increase annual crop yield, however, this may not be consistent across the different types of crops. Additionally, fertilizer usage may also be dependent on cost and how much the Vietnamese government is able to subsidize. Therefore, I hypothesize that the yield may not be consistent, and this may also depend on the actual farm size. I hope to supplement my data with some qualitative information about how much the Vietnamese government subsidized fertilizer in 2020 to see if this may have impacted fertilizer usage. I only have a data set for 2020, but hope to gather another dataset from a different year to do a comparison between fertilizer usage across various years. 
+
+The data to answer this question comes from the INSERT DATA SOURCE, which surveys Vietnamese farmers INSERT MORE DESCRIPTION OF DATA SET. For this project, I will focus on a smaller subset of respondents, only focusing on farmers who used and did not not used fertilizer. 
 
 The data set I have separates crops into annuals and perennials. Within each type of crop, there are 5 subsets of crops that are commonly grown by farmers in Vietnam. Data for each crop type has the quantity of fertilizer usage by the area. Additionally, the data set includes information about each farmer, their province, sex, and leave of education. The explanatory variable could be the area of farmland and the fertilizer usage. The outcome variable of interest is the total crop yield. 
 
@@ -28,23 +43,106 @@ Graph 2: Fertilizer Usage on Perennial Crops
 
 I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
 
+## Description of Data Source
+
+## Conclusion
+
+
+Selecting and renaming variables 
 
 ```{r}
-library("tidyverse")
-library("ggplot2")
+tt <- Data_TT2020 |>
+  drop_na(PHANHH) |>
+  select(
+     DATNN01_TS, DATNN02_TS, DATNN03_TS, PHANHH, PHANHH01_DT, PHANHH01_KL, PHANHH02_DT, PHANHH02_KL, PHANHH04_DT, PHANHH04_KL, THUTRONGTROT01_DT, THUTRONGTROT01_GT, THUTRONGTROT01_GTBAN, THUTRONGTROT02_DT, THUTRONGTROT02_GT, THUTRONGTROT02_GTBAN, THUTRONGTROT03_DT, THUTRONGTROT03_GT, THUTRONGTROT03_GTBAN, THUTRONGTROT11_DT, THUTRONGTROT11_GT, THUTRONGTROT11_GTBAN
+          )|>
+  rename(
+    annual = DATNN01_TS,
+         rice = DATNN02_TS,
+         perennial = DATNN03_TS,
+         fert = PHANHH,
+         anfertarea = PHANHH01_DT, 
+         anfertkg = PHANHH01_KL,
+         ricefertarea = PHANHH02_DT,
+         ricefertkg = PHANHH02_KL,
+         perfertarea = PHANHH04_DT,
+         perfertkg = PHANHH04_KL,
+         totarea = THUTRONGTROT01_DT,
+         totharvest = THUTRONGTROT01_GT,
+         totsold = THUTRONGTROT01_GTBAN,
+         anhararea = THUTRONGTROT02_DT,
+         anharvest = THUTRONGTROT02_GT,
+         anharsold = THUTRONGTROT02_GTBAN,
+         riceharvarea = THUTRONGTROT03_DT,
+         riceharvest = THUTRONGTROT03_GT,
+         riceharsold = THUTRONGTROT03_GTBAN,
+         perharvarea = THUTRONGTROT11_DT,
+         perharvest = THUTRONGTROT11_GT,
+         perharsold = THUTRONGTROT11_GTBAN
+         )
 
-data.tt2020 <- 
-  read_csv("~/R/Tong dieu tra Nong Lam Thuy San 2020/Thoa Notes/Data_TrangTrai_2020.csv")
+```
 
-## Relationship between quantity of fertilizer use on annual crops
-## I observe a positive relationship between the quantity of fertilizer used and the area of land.
+Visualizing the data
+
+```{r}
+
+tt<- tt |>
+  mutate(
+    fert = case_when(fert == 1 ~ "Fertilizer", 
+                     fert == 2 ~ "No Fertilizer"))
+
+ggplot(tt, aes(x = fert, y = log(totsold)))+
+  geom_boxplot()+
+  labs(
+    x = "Fertilizer Usage",
+    y = "Total Earnings from Harvest Sold",
+    title = "Distribution of earnings by fertilizer and non-fertilizer users")
 
 
-theme_set(theme_bw())
 
-ggplot(data = data.tt2020,
-       mapping = aes(x = PHANHH01_DT,
-                     y = log(PHANHH01_KL)))+
+
+```
+
+More Visualization
+
+```{r}
+
+income_his <- ggplot(tt, aes(x = log(totarea))) +
+  geom_histogram(aes(y = ..density..), binwidth = 1)
+
+income_his
+
+```
+
+Relationships between fertilizer quantity and area. 
+Fertilizer: 1050820
+No Fertilizer: 201131.4
+
+Difference in mean in 849688.6 VND
+
+```{r}
+
+ate <- tt |>
+  group_by(fert)|>
+  summarize(totsold = mean(totsold, na.rm = TRUE))|>
+  pivot_wider(names_from = fert, values_from = totsold)|>
+              mutate(ate = Fertilizer - `No Fertilizer`) |>
+pull(ate)
+
+ate
+
+```
+
+## Relationship between land size and fertilizer usage
+
+Relationship between quantity of fertilizer use on perennial crops
+I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers.
+
+```{r}
+ggplot(data = tt,
+       mapping = aes(x = anfertarea,
+                     y = log(anfertkg)))+
   geom_point()+
   geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
@@ -52,18 +150,95 @@ ggplot(data = data.tt2020,
        y = "Quantity of Fertilzer (kg)",
        title = "Fertilzer Usage on Annual Crops")
 
-## Relationship between quantity of fertilizer use on perennial crops
-##I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
-
-ggplot(data = data.tt2020,
-       mapping = aes(x = PHANHH04_DT,
-                     y = log(PHANHH04_KL)))+
+ 
+ggplot(data = tt,
+       mapping = aes(x = perfertarea,
+                     y = log(perfertkg)))+
   geom_point()+
   geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
   labs(x = "Area of Fertilizer (m2)" ,
        y = "Quantity of Fertilzer (kg)",
        title = "Fertilzer Usage on Perennials Crops")
+
 ```
 
+
+## Bootstrap
+
+The p-value for the test of the null hypothesis that there is no difference in population means of Fertilizer users and non Fertilizer user is zero. This means that there is no an extremely small probalility that getting an estiamted differenc ein means as large in magniture as the one we estimate if there were no true difference in population means. 
+
+```{r}
+
+set.seed(02138)
+
+ate_p <- tt |>
+  specify(totsold ~ fert)|>
+  hypothesize(null = "independence") |>
+  generate(reps = 1000, type ="permute") |>
+  calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))|>
+  get_p_value(obs_stat = ate, direction = "both")
+
+ate_p |>
+  visualize() +
+  shade_p_value(obs_stat = ate, direction = "both")
+
+
+```
+
+Confidence Interval
+
+```{r}
+
+set.seed(02138)
+ate_boots <- tt |>
+  specify(totsold ~ fert) |>
+  generate(reps = 1000, type = "bootstrap") |>
+  calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))
+
+set.seed(02138)
+ate_boots_alt <- tt |>
+  rep_slice_sample(fert = 1, replace = TRUE, reps = 1000) |>
+  group_by(replicate, fert)|>
+  summarize(totsold = mean(totsold)) |>
+  pivot_wider(names_from = fert, values_from = totsold)|>
+  mutate(ate = Fertilizer - `No Fertilizer`)|>
+  select(replicate, ate)
+
+```
+
+
+
+```{r}
+
+fit <- lm(totsold ~ fert + anfertarea + perfertarea, data = tt)
+prop_coef <- coef(fit)["fert"]
+
+fit
+
+library(broom)
+fit_table <- tidy(fit)
+
+var_labels <- c(
+  "(Intercept)" = "Intercept",
+  "fert" = "Fertilizer Users",
+  "anfertarea" = "Area of Land for Annual Crops",
+  "perfertarea" = "Area of Land for Perennial Crops"
+)
+
+modelsummary::modelsummary(fit,
+                           statistic = c("s.e. = {std.error}",
+                           "p = {p.value}"),
+                           coef_map = var_labels,
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
+
+prop_se <- fit_table |>
+  filter(term == "fert") |>
+  pull(std.error)
+
+prop_pval <- fit_table |>
+  filter(term == "fert") |>
+  pull(p.value)
+
+```
 
