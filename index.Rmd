@@ -15,7 +15,6 @@ library(ggplot2)
 library(readr)
 library(infer)
 
-
 Data_TT2020 <- read_csv("data/Data_TT2020.csv")
 
 ```
@@ -32,21 +31,6 @@ The data to answer this question comes from the INSERT DATA SOURCE, which survey
 The data set I have separates crops into annuals and perennials. Within each type of crop, there are 5 subsets of crops that are commonly grown by farmers in Vietnam. Data for each crop type has the quantity of fertilizer usage by the area. Additionally, the data set includes information about each farmer, their province, sex, and leave of education. The explanatory variable could be the area of farmland and the fertilizer usage. The outcome variable of interest is the total crop yield. 
 
 Patterns I hope to observe in this data is any relationship between the types of crops that farmers use more fertilizer on. It would be interesting to see whether farmers are using fertilizers more on annual or perennial crops and especially, whether are there crops in that fertilizer usage is heavily concentrated. It would also be interesting to see if the age of the farmer impacts how much fertilizer they use. My dataset has 20,930 observations. The year of birth of the farmers in the dataset range from 1950 to 2000. There are a lot of missing variables so that is something I would need to consider with this data set. 
-
-Milestone 4: Add results from one analysis
-
-Graph 1: Fertilizer Usage on Annual Crops
-
-I observe a positive relationship between the quantity of fertilizer used and the area of land. Logically, this makes sense because as farmable area increases, the quantity of fertilizer used on the land increases. 
-
-Graph 2: Fertilizer Usage on Perennial Crops
-
-I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
-
-## Description of Data Source
-
-## Conclusion
-
 
 Selecting and renaming variables 
 
@@ -83,7 +67,7 @@ tt <- Data_TT2020 |>
 
 ```
 
-Visualizing the data
+## Visualizing the data
 
 ```{r}
 
@@ -98,9 +82,6 @@ ggplot(tt, aes(x = fert, y = log(totsold)))+
     x = "Fertilizer Usage",
     y = "Total Earnings from Harvest Sold",
     title = "Distribution of earnings by fertilizer and non-fertilizer users")
-
-
-
 
 ```
 
@@ -139,6 +120,14 @@ ate
 Relationship between quantity of fertilizer use on perennial crops
 I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers.
 
+Graph 1: Fertilizer Usage on Annual Crops
+
+I observe a positive relationship between the quantity of fertilizer used and the area of land. Logically, this makes sense because as farmable area increases, the quantity of fertilizer used on the land increases. 
+
+Graph 2: Fertilizer Usage on Perennial Crops
+
+I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
+
 ```{r}
 ggplot(data = tt,
        mapping = aes(x = anfertarea,
@@ -168,6 +157,8 @@ ggplot(data = tt,
 
 The p-value for the test of the null hypothesis that there is no difference in population means of Fertilizer users and non Fertilizer user is zero. This means that there is no an extremely small probalility that getting an estiamted differenc ein means as large in magniture as the one we estimate if there were no true difference in population means. 
 
+
+
 ```{r}
 
 set.seed(02138)
@@ -179,10 +170,7 @@ ate_p <- tt |>
   calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))|>
   get_p_value(obs_stat = ate, direction = "both")
 
-ate_p |>
-  visualize() +
-  shade_p_value(obs_stat = ate, direction = "both")
-
+ate_p
 
 ```
 
@@ -196,17 +184,12 @@ ate_boots <- tt |>
   generate(reps = 1000, type = "bootstrap") |>
   calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))
 
-set.seed(02138)
-ate_boots_alt <- tt |>
-  rep_slice_sample(fert = 1, replace = TRUE, reps = 1000) |>
-  group_by(replicate, fert)|>
-  summarize(totsold = mean(totsold)) |>
-  pivot_wider(names_from = fert, values_from = totsold)|>
-  mutate(ate = Fertilizer - `No Fertilizer`)|>
-  select(replicate, ate)
+ate_boots
+
 
 ```
 
+Controlling for size of land to prevent large farms from being a confoudning factor.
 
 
 ```{r}
@@ -214,23 +197,21 @@ ate_boots_alt <- tt |>
 fit <- lm(totsold ~ fert + anfertarea + perfertarea, data = tt)
 prop_coef <- coef(fit)["fert"]
 
-fit
-
 library(broom)
 fit_table <- tidy(fit)
 
 var_labels <- c(
   "(Intercept)" = "Intercept",
-  "fert" = "Fertilizer Users",
+  "fertNo Fertilizer" = "Fertilizer Users",
   "anfertarea" = "Area of Land for Annual Crops",
   "perfertarea" = "Area of Land for Perennial Crops"
 )
 
-modelsummary::modelsummary(fit,
-                           statistic = c("s.e. = {std.error}",
-                           "p = {p.value}"),
+
+modelsummary::modelsummary(fit, 
                            coef_map = var_labels,
-                           gof_map = c("nobs", "r.squared", "adj.r.squared"))
+                           statistic = c("s.e. = {std.error}",
+                           "p = {p.value}"))
 
 prop_se <- fit_table |>
   filter(term == "fert") |>
