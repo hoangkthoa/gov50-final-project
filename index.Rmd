@@ -1,13 +1,14 @@
 ---
 title: "Gov 50 Final Project"
 author: Thoa Hoang
-description: "Fertilizer usage and earning potential from crop yield in Vietnam"
+description: "Fertilizer usage and crop yield in Viet Nam"
 output:
   distill::distill_article:
     self_contained: false
 ---
 
 ```{r setup, include = FALSE}
+
 options(width = 100)
 
 library(tidyverse)
@@ -19,29 +20,27 @@ Data_TT2020 <- read_csv("data/Data_TT2020.csv")
 
 ```
 
-
 ## Background and Project Overview 
 
-The agriculture industry contributes an estimated USD $717 billion to the GDP of Indonesia, Thailand, Philippines, and Vietnam. It employs over 127 million people and accounts for around 30 percent of the entire region’s economy. Yet, the sector has lower productivity and incomes, which contribute to four out of five in rural areas living below the international poverty line. In Southeast Asia, agriculture is closely tied to poverty reduction and economic growth strategy for the region. Farmers in Vietnam depend on fertilizer to increase their crop yield as a way to also increase their income. However, it is unclear how effective fertilizer is on crop yield and if this is consistent across different perennial and annual crops in Vietnam. Through this project, I will use a data set from the Rural and Agricultural 2020 Census.
+Even though agriculture only contributes to an estimated 13 percent of Viet Nam’s gross domestic product (GDP), the agriculture sector employs over 43 percent of the country’s population. Among all the farmers in Viet Nam, 89 percent are considered small family farmers whose incomes are vulnerable to crop yields.  
 
-I hypothesize that fertilizer will increase annual crop yield, however, this may not be consistent across the different types of crops. Additionally, fertilizer usage may also be dependent on cost and how much the Vietnamese government is able to subsidize. Therefore, I hypothesize that the yield may not be consistent, and this may also depend on the actual farm size. I hope to supplement my data with some qualitative information about how much the Vietnamese government subsidized fertilizer in 2020 to see if this may have impacted fertilizer usage. I only have a data set for 2020, but hope to gather another dataset from a different year to do a comparison between fertilizer usage across various years. 
+Fertilizers are an innovation that has been helping farmers boost their yield.  However, few studies have been conducted to better understand to what extent fertilizer impacts the earnings of farmers. Using data from Viet Nam's Rural and Agricultural 2020 Census, this cross-sectional study aims to answer how the usage of fertilizer affects the crop yield of farmers in Vietnam. 
 
-The data to answer this question comes from the INSERT DATA SOURCE, which surveys Vietnamese farmers INSERT MORE DESCRIPTION OF DATA SET. For this project, I will focus on a smaller subset of respondents, only focusing on farmers who used and did not not used fertilizer. 
+I hypothesize that fertilizer does have a positive impact on crop yield, thus affecting the income earned from crops sold. Therefore, farmers who use fertilizer will observe higher incomes than farmers who don’t use fertilizer. This study does not distinguish between synthetic and organic fertilizers. Finally, because farmers could self-select into using fertilizer or not, factors such as subsidies from the government or farm size (economy of scale, bigger farmers have more resources and thus could grow more and have higher yields) may impact the results. 
 
-The data set I have separates crops into annuals and perennials. Within each type of crop, there are 5 subsets of crops that are commonly grown by farmers in Vietnam. Data for each crop type has the quantity of fertilizer usage by the area. Additionally, the data set includes information about each farmer, their province, sex, and leave of education. The explanatory variable could be the area of farmland and the fertilizer usage. The outcome variable of interest is the total crop yield. 
+## Description of Data
 
-Patterns I hope to observe in this data is any relationship between the types of crops that farmers use more fertilizer on. It would be interesting to see whether farmers are using fertilizers more on annual or perennial crops and especially, whether are there crops in that fertilizer usage is heavily concentrated. It would also be interesting to see if the age of the farmer impacts how much fertilizer they use. My dataset has 20,930 observations. The year of birth of the farmers in the dataset range from 1950 to 2000. There are a lot of missing variables so that is something I would need to consider with this data set. 
+To explore the relationship between fertilizer usage and farmer income, I will use data from the 2020 Results of the Mid-term Rural and Agricultural Survey from the General Statistics Office of Vietnam. This data is from a large-scale survey conducted nationwide and contains information from 8,297 communes and 20,611 farms. This data set contains 20,930 observations. For this study, I will be focusing on a subset of the data, focusing on the fertilizer quantity, area of farms, and income from the sales of crops. For the purpose of this study, profit is purely seen as money earned from crop sold. 
 
-Selecting and renaming variables 
+The data set separates crops into annuals and perennials and includes crop yield information for the most common crops in the country. In addition to income about the types of crops planted, the data includes the quantity of fertilizer used for each crop, the area of the farm, and income information for each farm. This cross-sectional study focuses on the subset of farmers who use and don't use fertilizer. To explore the relationship between fertilizer usage and income, the independent variable is fertilizer, and the dependent variable is crop yield and income from crops sold. This study seeks to study the relationship between fertilizer usage (in kilograms) and income from farmers. 
 
 ```{r}
+
 tt <- Data_TT2020 |>
   drop_na(PHANHH) |>
-  select(
-     DATNN01_TS, DATNN02_TS, DATNN03_TS, PHANHH, PHANHH01_DT, PHANHH01_KL, PHANHH02_DT, PHANHH02_KL, PHANHH04_DT, PHANHH04_KL, THUTRONGTROT01_DT, THUTRONGTROT01_GT, THUTRONGTROT01_GTBAN, THUTRONGTROT02_DT, THUTRONGTROT02_GT, THUTRONGTROT02_GTBAN, THUTRONGTROT03_DT, THUTRONGTROT03_GT, THUTRONGTROT03_GTBAN, THUTRONGTROT11_DT, THUTRONGTROT11_GT, THUTRONGTROT11_GTBAN
+  select(DATNN01_TS, DATNN02_TS, DATNN03_TS, PHANHH, PHANHH01_DT, PHANHH01_KL, PHANHH02_DT, PHANHH02_KL, PHANHH04_DT, PHANHH04_KL, THUTRONGTROT01_DT, THUTRONGTROT01_GT, THUTRONGTROT01_GTBAN, THUTRONGTROT02_DT, THUTRONGTROT02_GT, THUTRONGTROT02_GTBAN, THUTRONGTROT03_DT, THUTRONGTROT03_GT, THUTRONGTROT03_GTBAN, THUTRONGTROT11_DT, THUTRONGTROT11_GT, THUTRONGTROT11_GTBAN
           )|>
-  rename(
-    annual = DATNN01_TS,
+  rename(annual = DATNN01_TS,
          rice = DATNN02_TS,
          perennial = DATNN03_TS,
          fert = PHANHH,
@@ -53,21 +52,25 @@ tt <- Data_TT2020 |>
          perfertkg = PHANHH04_KL,
          totarea = THUTRONGTROT01_DT,
          totharvest = THUTRONGTROT01_GT,
-         totsold = THUTRONGTROT01_GTBAN,
+         totprofit = THUTRONGTROT01_GTBAN,
          anhararea = THUTRONGTROT02_DT,
          anharvest = THUTRONGTROT02_GT,
-         anharsold = THUTRONGTROT02_GTBAN,
+         anprofit = THUTRONGTROT02_GTBAN,
          riceharvarea = THUTRONGTROT03_DT,
          riceharvest = THUTRONGTROT03_GT,
-         riceharsold = THUTRONGTROT03_GTBAN,
+         riceprofit = THUTRONGTROT03_GTBAN,
          perharvarea = THUTRONGTROT11_DT,
          perharvest = THUTRONGTROT11_GT,
-         perharsold = THUTRONGTROT11_GTBAN
+         perprofit = THUTRONGTROT11_GTBAN
          )
 
 ```
 
-## Visualizing the data
+## Results
+
+Box plot: Distribution of earnings from crops sold by fertilizer and non-fertilizer users
+
+The box plot shows the distribution of fertilizer users in 2020 and the profits from crops sold. The plot shows that the profits from crops sold by farmers who used fertilizer are higher than farmers who did not use fertilizer. Although the data contain outliers the median line that runs across each box shows that on average, the income of fertilizer users is higher than non-fertilizer users.
 
 ```{r}
 
@@ -76,38 +79,43 @@ tt<- tt |>
     fert = case_when(fert == 1 ~ "Fertilizer", 
                      fert == 2 ~ "No Fertilizer"))
 
-ggplot(tt, aes(x = fert, y = log(totsold)))+
+ggplot(tt, aes(x = fert, y = log(totprofit)))+
   geom_boxplot()+
   labs(
     x = "Fertilizer Usage",
-    y = "Total Earnings from Harvest Sold",
-    title = "Distribution of earnings by fertilizer and non-fertilizer users")
+    y = "Profit from Harvest Sold",
+    title = "Distribution of earnings from crops sold by fertilizer and non-fertilizer users")
 
 ```
 
-More Visualization
+Additionally, to understand the size of farms in this data set, a histogram was created. This graph shows that most farms are between 6 and 14 square meters. 
 
 ```{r}
 
 income_his <- ggplot(tt, aes(x = log(totarea))) +
-  geom_histogram(aes(y = ..density..), binwidth = 1)
+  geom_histogram(aes(y = ..density..), binwidth = 1) +
+   labs(
+    x = "Farm Size",
+    y = "Density",
+    title = "Density Histogram for Farm Size")
 
 income_his
 
 ```
 
-Relationships between fertilizer quantity and area. 
-Fertilizer: 1050820
-No Fertilizer: 201131.4
+## Fertilizer Usage and Profits from Crop Sold
 
-Difference in mean in 849688.6 VND
+Finally, to explore how fertilizer usage impacts the incomes of farmers, I calculated the difference in mean income for farmers who use fertilizer versus farmers who do not use fertilizer. The average effects of fertilizer on earnings from crop yield are calculated by comparing the earnings from crop yield between users and non-users of fertilizer. In this study, profit is loosely defined as earnings from crops sold. This amount does not include any deductions for materials or cost of production. 
+
+The estimated difference in means is 849,688 thousand VND, which is equivalent to $36,041 USD. Farmers who used fertilizer had a mean income of 1,050,820 thousand VND, which is equivalent to 44,573 USD versus 201,131 thousand VND or 8,531 USD.
+
 
 ```{r}
 
 ate <- tt |>
   group_by(fert)|>
-  summarize(totsold = mean(totsold, na.rm = TRUE))|>
-  pivot_wider(names_from = fert, values_from = totsold)|>
+  summarize(totprofit = mean(totprofit, na.rm = TRUE))|>
+  pivot_wider(names_from = fert, values_from = totprofit)|>
               mutate(ate = Fertilizer - `No Fertilizer`) |>
 pull(ate)
 
@@ -115,18 +123,11 @@ ate
 
 ```
 
-## Relationship between land size and fertilizer usage
+## Fertilizer Usage by Crop Types (Annual and Perennial Crops)
 
-Relationship between quantity of fertilizer use on perennial crops
-I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers.
+The following graphs seek to observe trends between fertilizer usage on the type of crop. Additionally, the graphs below also provide a check to see the relationship between fertilizer and farmland size.
 
-Graph 1: Fertilizer Usage on Annual Crops
-
-I observe a positive relationship between the quantity of fertilizer used and the area of land. Logically, this makes sense because as farmable area increases, the quantity of fertilizer used on the land increases. 
-
-Graph 2: Fertilizer Usage on Perennial Crops
-
-I observe a similar positive relationship. Where there seems to be a difference between the annual and perennial crops is the number of observations. Within this dataset, it seems like there are more observations for perennial crops than annual. This could mean that there area more perennial crops being grown in this national survey of Vietnamese farmers. 
+The plots below show a positive relationship between the quantity of fertilizer used and land size. As the size of the land increases, the quantity of fertilizer used also increases, which makes sense. Where there is an interesting difference between the annual and perennial crops is the number of observations. Within this data set, there are more observations for perennial crops than annual. This is noteworthy because perennial crops have greater potential for sustainable production because, unlike annual crops which need to be replanted each year, perennial crops do not need to be reseeded every year and so require less plowing and are traditionally seen as better protection from erosion.
 
 ```{r}
 ggplot(data = tt,
@@ -136,8 +137,8 @@ ggplot(data = tt,
   geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
   labs(x = "Area of Fertilizer (m2)" ,
-       y = "Quantity of Fertilzer (kg)",
-       title = "Fertilzer Usage on Annual Crops")
+       y = "Quantity of Fertilizer (kg)",
+       title = "Fertilizer Usage on Annual Crops")
 
  
 ggplot(data = tt,
@@ -147,16 +148,14 @@ ggplot(data = tt,
   geom_smooth(method = "lm", se = FALSE)+
   scale_x_log10() +
   labs(x = "Area of Fertilizer (m2)" ,
-       y = "Quantity of Fertilzer (kg)",
-       title = "Fertilzer Usage on Perennials Crops")
+       y = "Quantity of Fertilizer (kg)",
+       title = "Fertilizer Usage on Perennials Crops")
 
 ```
 
+## Hypothesis testing
 
-## Bootstrap
-
-The p-value for the test of the null hypothesis that there is no difference in population means of Fertilizer users and non Fertilizer user is zero. This means that there is no an extremely small probalility that getting an estiamted differenc ein means as large in magniture as the one we estimate if there were no true difference in population means. 
-
+The null hypothesis is that fertilizer makes no difference in profit for farmers. The p-value for the test is 0, meaning that the difference in population means of fertilizer users and the non-fertilizer user is zero, which means I can reject the null hypothesis, so this means there is an observed difference in profit for farmers who use fertilizer versus those who don't.
 
 
 ```{r}
@@ -164,7 +163,7 @@ The p-value for the test of the null hypothesis that there is no difference in p
 set.seed(02138)
 
 ate_p <- tt |>
-  specify(totsold ~ fert)|>
+  specify(totprofit ~ fert)|>
   hypothesize(null = "independence") |>
   generate(reps = 1000, type ="permute") |>
   calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))|>
@@ -174,13 +173,11 @@ ate_p
 
 ```
 
-Confidence Interval
-
 ```{r}
 
 set.seed(02138)
 ate_boots <- tt |>
-  specify(totsold ~ fert) |>
+  specify(totprofit ~ fert) |>
   generate(reps = 1000, type = "bootstrap") |>
   calculate(stat = "diff in means", order = c("Fertilizer", "No Fertilizer"))
 
@@ -189,12 +186,19 @@ ate_boots
 
 ```
 
-Controlling for size of land to prevent large farms from being a confoudning factor.
+## Regression
+
+For this regression, R understands the dependent variable as not using fertilizer, so not using fertilizer is associated with lower income from crop yield. Another note for this study is the confounding variable of farm size. The size of the farm could impact resources the farm has access to or just earning potential in general. Therefore, in this regression, to account for this confounding variable farmland size was held constant. 
+
+The intercept is 487,840 thousand VND (20,693 USD), which is the predicted earnings that a farmer can make. The coefficient is not using fertilizer, which would predict that a farmer who doesn’t use fertilizer earns 603,137 thousand VND (25,583 USD) less than a farmer who uses fertilizer. This model predicts that by using fertilizer, a farmer would see an increase of 603,137 thousand VND (25,583 USD), on average, holding the area of land used for annual and perennial crops constant. Therefore, using fertilizer more than doubles a farmer’s profit from crop yield.
+
+The p-value for this test is 0 which represents how often we would observe an estimated coefficient this far from 0 if the true coefficient (or difference in means) were actually 0. In this study, the p-value is 0, so we can also say that our test is statistically significant, and therefore we can reject the null hypothesis. This study does not say that using fertilizer will result in a higher income. Rather, from this study, there is a relationship between fertilizer and crop yield and our model predicts an increase in earnings from crop yield when farmers use fertilizer. 
+
 
 
 ```{r}
 
-fit <- lm(totsold ~ fert + anfertarea + perfertarea, data = tt)
+fit <- lm(totprofit ~ fert + anfertarea + perfertarea, data = tt)
 prop_coef <- coef(fit)["fert"]
 
 library(broom)
@@ -222,4 +226,9 @@ prop_pval <- fit_table |>
   pull(p.value)
 
 ```
+## Conclusion
+
+This study shows that there is a relationship between fertilizer and crop yield. This is important because it impacts the livelihood of farmers in Vietnam. This model predicts that compared to farmers who don't use fertilizer, farmers that do use fertilizer earn $25,583 USD more from their crop yield (603,137 thousand VND). This study has important implications for climate change, farmers’ livelihoods, and food security. For example, as the conversation about climate change calls for countries to reduce greenhouse gas emissions, farmers are asked to reduce fertilizer consumption. In higher-income countries, governments have more resources to subsidize farmers or help ease any loss of profits from crop yield. However, for lower-income countries that depend on agriculture, asking farmers to reduce fertilizer consumption has a significant impact on their livelihood, thus their quality of living.
+
+Overall, more research is needed to fully understand the extent of fertilizer usage and crop yield. This study only looks at 2020 data. Additional analysis could be done to look at fertilizer usage across years. Additionally, more analysis could be done to understand crop yield between smallholder farmers versus larger and industrialized farms. 
 
